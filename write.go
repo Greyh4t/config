@@ -42,11 +42,11 @@ func (c *Config) WriteFile(fname string, perm os.FileMode, header string) error 
 func (c *Config) write(buf *bufio.Writer, header string) (err error) {
 	if header != "" {
 		// Add comment character after of each new line.
-		if i := strings.Index(header, "\n"); i != -1 {
-			header = strings.Replace(header, "\n", "\n"+c.comment, -1)
+		if i := strings.Index(header, LF); i != -1 {
+			header = strings.Replace(header, LF, LF+c.comment, -1)
 		}
 
-		if _, err = buf.WriteString(c.comment + header + "\n"); err != nil {
+		if _, err = buf.WriteString(c.comment + header + LF); err != nil {
 			return err
 		}
 	}
@@ -60,7 +60,7 @@ func (c *Config) write(buf *bufio.Writer, header string) (err error) {
 					continue
 				}
 
-				if _, err = buf.WriteString("\n[" + section + "]\n"); err != nil {
+				if _, err = buf.WriteString(LF+"[" + section + "]"+LF); err != nil {
 					return err
 				}
 
@@ -70,7 +70,7 @@ func (c *Config) write(buf *bufio.Writer, header string) (err error) {
 
 						if tValue.position == i {
 							if _, err = buf.WriteString(fmt.Sprint(
-								option, c.separator, tValue.v, "\n")); err != nil {
+								option, c.separator, tValue.v, LF)); err != nil {
 								return err
 							}
 							c.RemoveOption(section, option)
@@ -82,7 +82,7 @@ func (c *Config) write(buf *bufio.Writer, header string) (err error) {
 		}
 	}
 
-	if _, err = buf.WriteString("\n"); err != nil {
+	if _, err = buf.WriteString(LF); err != nil {
 		return err
 	}
 

@@ -17,6 +17,7 @@ package config
 import (
 	"regexp"
 	"strings"
+	"runtime"
 )
 
 const (
@@ -50,6 +51,7 @@ var (
 
 	varRegExp    = regexp.MustCompile(`%\(([a-zA-Z0-9_.\-]+)\)s`) // %(variable)s
 	envVarRegExp = regexp.MustCompile(`\${([a-zA-Z0-9_.\-]+)}`)   // ${envvar}
+	LF = getLF()
 )
 
 // Config is the representation of configuration settings.
@@ -148,4 +150,15 @@ func stripComments(l string) string {
 		}
 	}
 	return l
+}
+
+func getLF() string {
+	switch runtime.GOOS {
+	case "windows":
+		return "\r\n"
+	case "darwin":
+		return "\r"
+	default:
+		return "\n"
+	}
 }
